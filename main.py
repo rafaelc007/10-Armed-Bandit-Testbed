@@ -55,9 +55,10 @@ class GreedyBandit:
 
 
 class EGreedyBandit(GreedyBandit):
-    eps = 0.1
+    eps = 0
 
-    def set_eps(self, value):
+    def set_eps(self, value, epsilon=0.5):
+        self.eps = epsilon
         self.eps = value
 
     def take_action(self):
@@ -67,34 +68,47 @@ class EGreedyBandit(GreedyBandit):
             return rd.sample(range(self.arm_size), 1)[0]
 
 
-def plot_data(data):
-    act_data, rw_data = zip(*data)
-    plt.figure()
-    plt.subplot(1, 2, 1)
-    plt.plot(rw_data, 'r-', label="reward")
-    plt.grid(1)
-    plt.xlabel("trial")
-    plt.ylabel("reward")
-    plt.subplot(1, 2, 2)
-    plt.plot(act_data, 'o-', label="action")
-    plt.grid(1)
-    plt.xlabel("action")
-    plt.ylabel("reward")
-    plt.ylim((0, 10))
-    plt.show()
+def plot_data(best: int, *args):
+    """
+    Plot
+    :param data:
+    :return:
+    """
+    fig = plt.figure()
+    ax1 = fig.add_subplot(2, 1, 1)
+    ax2 = fig.add_subplot(2, 1, 2)
+    color = iter(plt.cm.rainbow(np.linspace(0, 1, len(args))))
+
+    for n, data in enumerate(args):
+        col = next(color)
+        data = np.array(data)
+        act_data = data[:, :, 0].astype(int)
+        rwd_data = data[:, :, 1]
+
+        ax1.plot(np.sum(rwd_data, axis=0)/rwd_data.shape[0], 'r-', label="rwd{}".format(n), c=col)
+        ax1.grid(1)
+        ax1.set_xlabel("trial")
+        ax1.set_ylabel("reward")
+        ax1.legend()
+
+        b_data = act_data == best[0]
+        ax2.plot(100*np.sum(b_data, axis=0)/b_data.shape[0], 'r-', label="best{}".format(n), c=col)
+        ax2.grid(1)
+        ax2.set_xlabel("trial")
+        ax2.set_ylabel("% of best")
+        ax2.legend()
 
 
-def plot_best(best_data, n_tot):
-    b_data = 100* np.array(best_data) / n_tot
-    plt.figure()
-    plt.plot(b_data, 'r-', label="reward")
-    plt.grid(1)
-    plt.xlabel("trial")
-    plt.ylabel("best")
+    plt.tight_layout()
     plt.show()
 
 
 def plot_testbed(test_bed: TestBed):
+    """
+    Plot a graph showing the distribution of a given testbed
+    :param test_bed: The testbed to extract the data to plot
+    :return:
+    """
     arm_values = []
     for arm in test_bed.arms:
         arm_values.append(arm.action_val)
@@ -109,36 +123,36 @@ def plot_testbed(test_bed: TestBed):
 
 
 if __name__ == "__main__":
-    #rd.seed(100)
+    # rd.seed(100)
     test_bed = TestBed(10)
     best = test_bed.get_best()
     # plot_testbed(test_bed)
 
     n_steps = 100
-    n_mean = 200
-    n_best1 = [0]*n_steps
-    n_best2 = [0]*n_steps
-    log1 = np.array([[0.0, 0.0]] * n_steps)
-    log2 = np.array([[0.0, 0.0]] * n_steps)
+    n_mean = 100
+    log1 = []
+    log2 = []
     for k in range(n_mean):
         print("Training iteration: ", k)
         bandit1 = GreedyBandit(10)
         bandit2 = EGreedyBandit(10)
+        trial1 = []
+        trial2 = []
         for n in range(n_steps):
             act1 = bandit1.take_action()
             act2 = bandit2.take_action()
-            if act1 == best[0]: n_best1[n] += 1
-            if act2 == best[0]: n_best2[n] += 1
 
             reward1 = test_bed.trial(act1)
             reward2 = test_bed.trial(act2)
 
             bandit1.train(act1, reward1)
             bandit2.train(act2, reward2)
-            log1[n] = np.add(log1[n], 1 / n_mean * np.array([act1, reward1]))
-            log2[n] = np.add(log2[n], 1 / n_mean * np.array([act2, reward2]))
+
+            trial1.append([act1, reward1])
+            trial2.append([act2, reward2])
+
+        log1.append(trial1)
+        log2.append(trial2)
 
     print("Best choice {}, value: {}".format(best[0], best[1]))
-    plot_data(log1)
-    # plot_best(n_best2, n_mean)
-    plot_data(log2)
+    plot_data(best, log1, log2)
