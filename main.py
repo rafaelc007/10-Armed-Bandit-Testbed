@@ -153,31 +153,20 @@ if __name__ == "__main__":
     best = test_bed.get_best()
     # plot_testbed(test_bed)
 
-    n_steps = 100
-    n_mean = 200
-    log1 = []
-    log2 = []
+    n_steps = 1000
+    n_mean = 2000
+    log = [[] for i in range(3)]    #TODO: remove this hardcode here
     for k in range(n_mean):
         print("Training iteration: ", k)
-        bandit1 = GreedyBandit(10)
-        bandit2 = EGreedyBandit(10, 0.1)
-        trial1 = []
-        trial2 = []
-        for n in range(n_steps):
-            act1 = bandit1.take_action()
-            act2 = bandit2.take_action()
-
-            reward1 = test_bed.trial(act1)
-            reward2 = test_bed.trial(act2)
-
-            bandit1.train(act1, reward1)
-            bandit2.train(act2, reward2)
-
-            trial1.append([act1, reward1])
-            trial2.append([act2, reward2])
-
-        log1.append(trial1)
-        log2.append(trial2)
+        bandits = [GreedyBandit(10), EGreedyBandit(10, 0.1), EGreedyBandit(10, 0.01)]
+        for b_bum, bandit in enumerate(bandits):
+            trial = []
+            for n in range(n_steps):
+                act = bandit.take_action()
+                reward = test_bed.trial(act)
+                bandit.train(act, reward)
+                trial.append([act, reward])
+            log[b_bum].append(trial)
 
     print("Best choice {}, value: {}".format(best[0], best[1]))
-    plot_data(best, log1, log2)
+    plot_data(best, log[0], log[1])
