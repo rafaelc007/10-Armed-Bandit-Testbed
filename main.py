@@ -9,7 +9,8 @@ class Arm:
     """
     action_val = 0
 
-    def __init__(self):
+    def __init__(self, seed=100):
+        rd.seed(seed)
         self.action_val = rd.gauss(0, 1)
 
     def get_reward(self):
@@ -35,7 +36,7 @@ class TestBed:
 
     def __init__(self, n_size=10):
         self.n_arms = n_size
-        self.arms = [Arm() for i in range(self.n_arms)]
+        self.arms = [Arm(100+i) for i in range(self.n_arms)]
 
     def trial(self, action):
         if action > self.n_arms or action < 0:
@@ -148,7 +149,6 @@ def plot_testbed(test_bed: TestBed):
 
 
 if __name__ == "__main__":
-    # rd.seed(100)
     test_bed = TestBed(10)
     best = test_bed.get_best()
     # plot_testbed(test_bed)
@@ -169,4 +169,4 @@ if __name__ == "__main__":
             log[b_bum].append(trial)
 
     print("Best choice {}, value: {}".format(best[0], best[1]))
-    plot_data(best, log[0], log[1])
+    plot_data(best, log[0], log[1], log[2])
