@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 
 
 class Arm:
+    """
+    Implements a bandit arm with gaussian distribution for the reward.
+    """
     action_val = 0
 
     def __init__(self):
@@ -13,7 +16,20 @@ class Arm:
         return rd.gauss(self.action_val, 1)
 
 
+class DeviantArm(Arm):
+    """
+    The Deviant Arm implements an arm driven by a random walk on its action value. The random walk presents mean zero
+    and std = 0.01.
+    """
+    def get_reward(self):
+        self.action_val += rd.gauss(0, 0.01)
+        return rd.gauss(self.action_val, 1)
+
+
 class TestBed:
+    """
+    The testbed includes a number 'n_arms' of bandits, each ruled by a gaussian reward rule.
+    """
     arms = []
     n_arms = 0
 
@@ -34,6 +50,9 @@ class TestBed:
 
 
 class GreedyBandit:
+    """
+    Purely greedy implementation. It saves some processing to use this class instead of EGreedyBandit with eps=0.
+    """
     arm_size = 0
     Qn = []
     step_n = 0
@@ -55,6 +74,9 @@ class GreedyBandit:
 
 
 class EGreedyBandit(GreedyBandit):
+    """
+    Epsilon greedy bandit, ruled by the factor eps which decides when to take actions and when to explore.
+    """
     eps = 0
 
     def set_eps(self, value, epsilon=0.5):
