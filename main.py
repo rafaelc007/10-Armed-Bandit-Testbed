@@ -79,8 +79,11 @@ class EGreedyBandit(GreedyBandit):
     """
     eps = 0
 
-    def set_eps(self, value, epsilon=0.5):
-        self.eps = epsilon
+    def __init__(self, arm_size, eps_val=0.5):
+        super().__init__(arm_size)
+        self.eps = eps_val
+
+    def set_eps(self, value):
         self.eps = value
 
     def take_action(self):
@@ -151,13 +154,13 @@ if __name__ == "__main__":
     # plot_testbed(test_bed)
 
     n_steps = 100
-    n_mean = 100
+    n_mean = 200
     log1 = []
     log2 = []
     for k in range(n_mean):
         print("Training iteration: ", k)
         bandit1 = GreedyBandit(10)
-        bandit2 = EGreedyBandit(10)
+        bandit2 = EGreedyBandit(10, 0.1)
         trial1 = []
         trial2 = []
         for n in range(n_steps):
