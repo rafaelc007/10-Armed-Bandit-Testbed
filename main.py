@@ -94,7 +94,7 @@ class EGreedyBandit(GreedyBandit):
             return rd.sample(range(self.arm_size), 1)[0]
 
 
-def plot_data(best: int, *args):
+def plot_data(best: int, *args, names=[]):
     """
     Plot
     :param data:
@@ -105,20 +105,23 @@ def plot_data(best: int, *args):
     ax2 = fig.add_subplot(2, 1, 2)
     color = iter(plt.cm.rainbow(np.linspace(0, 1, len(args))))
 
+    if not names:
+        names = ["data_{}".format(k) for k in range(len(args))]
+
     for n, data in enumerate(args):
         col = next(color)
         data = np.array(data)
         act_data = data[:, :, 0].astype(int)
         rwd_data = data[:, :, 1]
 
-        ax1.plot(np.sum(rwd_data, axis=0)/rwd_data.shape[0], 'r-', label="rwd{}".format(n), c=col)
+        ax1.plot(np.sum(rwd_data, axis=0)/rwd_data.shape[0], 'r-', label=names[n], c=col)
         ax1.grid(1)
         ax1.set_xlabel("trial")
         ax1.set_ylabel("reward")
         ax1.legend()
 
         b_data = act_data == best[0]
-        ax2.plot(100*np.sum(b_data, axis=0)/b_data.shape[0], 'r-', label="best{}".format(n), c=col)
+        ax2.plot(100*np.sum(b_data, axis=0)/b_data.shape[0], 'r-', label=names[n], c=col)
         ax2.grid(1)
         ax2.set_xlabel("trial")
         ax2.set_ylabel("% of best")
@@ -169,4 +172,4 @@ if __name__ == "__main__":
             log[b_bum].append(trial)
 
     print("Best choice {}, value: {}".format(best[0], best[1]))
-    plot_data(best, log[0], log[1], log[2])
+    plot_data(best, log[0], log[1], log[2], names=["greedy", "e=0.1", "e=0.01"])
