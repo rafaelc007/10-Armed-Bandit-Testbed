@@ -39,8 +39,8 @@ class EGreedyBandit(GreedyBandit):
     """
     eps = 0
 
-    def __init__(self, arm_size, eps_val=0.5):
-        super().__init__(arm_size)
+    def __init__(self, arm_size, alpha=None, eps_val=0.5):
+        super().__init__(arm_size, alpha=alpha)
         self.eps = eps_val
 
     def set_eps(self, value):
