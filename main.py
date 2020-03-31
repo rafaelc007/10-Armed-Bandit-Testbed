@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from TestbedClass import TestBed
+from TestbedClass import TestBed, DeviantTestBed
 from BanditClass import GreedyBandit, EGreedyBandit
 
 
@@ -63,22 +63,31 @@ def plot_testbed(test_bed: TestBed):
     plt.grid(1)
     plt.show()
 
+def run_testbed(n_steps, n_mean, n_arms, bed_type="classic", verbose=0):
+    """
+    Runs a testbed simulation
+    :param bed_type: can be one of ["classic", "deviant"] used to choose the type of simulation.
+    :param n_teps: number of steps to train the testbed
+    :param n_mean: number of trials to use when computing the mean
+    :param n_arms: number of arms to use
+    :param verbose: 0 -> show nothing, 1 -> show steps, 2 or more -> show steps and testbed graph
+    :return: best choice, log data collected from the trials
+    """
 
-def run_10_armed():
-    """
-    Run the 10-armed testbed example that is depicted in the RL book.
-    :return: plot graph
-    """
-    test_bed = TestBed(10)
+    if bed_type == "classic":
+        test_bed = TestBed(n_arms)
+    elif bed_type == "deviant":
+        test_bed = DeviantTestBed(n_arms)
+
+    if verbose > 1:
+        plot_testbed(test_bed)
+
+    bandits = [GreedyBandit(n_arms), EGreedyBandit(n_arms, 0.1), EGreedyBandit(n_arms, 0.01)]
     best = test_bed.get_best()
-    # plot_testbed(test_bed)
-
-    n_steps = 100
-    n_mean = 200
-    bandits = [GreedyBandit(10), EGreedyBandit(10, 0.1), EGreedyBandit(10, 0.01)]
     log = [[] for i in range(len(bandits))]
     for k in range(n_mean):
-        print("Training iteration: ", k)
+        if verbose > 0:
+            print("Training iteration: ", k)
         [bandit.reset() for bandit in bandits]  # restart all bandits
         for b_bum, bandit in enumerate(bandits):
             trial = []
@@ -89,9 +98,33 @@ def run_10_armed():
                 trial.append([act, reward])
             log[b_bum].append(trial)
 
+    return best, log
+
+def run_10_armed():
+    """
+    Run the 10-armed testbed example that is depicted in the RL book.
+    :return: plot graph
+    """
+    n_steps = 100
+    n_mean = 200
+    best, log = run_testbed(n_steps, n_mean, 10, verbose=1)
+
+    print("Best choice {}, value: {}".format(best[0], best[1]))
+    plot_data(best, log[0], log[1], log[2], names=["greedy", "e=0.1", "e=0.01"])
+
+
+def run_deviant10_armed():
+    """
+    Run the 10-armed testbed example that is depicted in the RL book.
+    :return: plot graph
+    """
+    n_steps = 100
+    n_mean = 200
+    best, log = run_testbed(n_steps, n_mean, 10, bed_type="deviant", verbose=1)
+
     print("Best choice {}, value: {}".format(best[0], best[1]))
     plot_data(best, log[0], log[1], log[2], names=["greedy", "e=0.1", "e=0.01"])
 
 
 if __name__ == "__main__":
-    run_10_armed()
+    run_deviant10_armed()

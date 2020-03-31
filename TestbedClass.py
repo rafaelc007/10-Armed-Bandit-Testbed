@@ -1,4 +1,4 @@
-from ArmClass import Arm
+from ArmClass import Arm, DeviantArm
 import numpy as np
 
 
@@ -23,3 +23,9 @@ class TestBed:
     def get_best(self):
         vals = [arm.action_val for arm in self.arms]
         return [np.argmax(vals), np.max(vals)]
+
+
+class DeviantTestBed(TestBed):
+    def __init__(self, n_size=10):
+        self.n_arms = n_size
+        self.arms = [DeviantArm(100 + i) for i in range(self.n_arms)]
