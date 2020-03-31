@@ -8,18 +8,23 @@ class GreedyBandit:
     arm_size = 0
     Qn = []
     step_n = 0
+    alpha_val = None
 
-    @staticmethod
-    def alpha(x):
-        return 1/x
+    def alpha(self):
+        if self.alpha_val is  None:
+            return 1/self.step_n
+        else:
+            return self.alpha_val
 
-    def __init__(self, arm_size):
+    def __init__(self, arm_size, alpha=None):
+        if alpha:
+            self.alpha_val = alpha
         self.arm_size = arm_size
         self.Qn = [0]*self.arm_size
 
     def train(self, action, reward):
         self.step_n += 1
-        self.Qn[action] += self.alpha(self.step_n) * (reward - self.Qn[action])
+        self.Qn[action] += self.alpha() * (reward - self.Qn[action])
 
     def take_action(self):
         return np.argmax(self.Qn)

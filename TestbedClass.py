@@ -11,7 +11,7 @@ class TestBed:
 
     def __init__(self, n_size=10):
         self.n_arms = n_size
-        self.arms = [Arm(100+i) for i in range(self.n_arms)]
+        self.arms = [Arm(200+i) for i in range(self.n_arms)]
 
     def trial(self, action):
         if action > self.n_arms or action < 0:

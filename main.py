@@ -27,14 +27,14 @@ def plot_data(best: int, *args, names=[]):
         act_data = data[:, :, 0].astype(int)
         rwd_data = data[:, :, 1]
 
-        ax1.plot(np.sum(rwd_data, axis=0)/rwd_data.shape[0], 'r-', label=names[n], c=col)
+        ax1.plot(np.sum(rwd_data, axis=0)/rwd_data.shape[0], label=names[n], c=col)
         ax1.grid(1)
         ax1.set_xlabel("trial")
         ax1.set_ylabel("reward")
         ax1.legend()
 
         b_data = act_data == best[0]
-        ax2.plot(100*np.sum(b_data, axis=0)/b_data.shape[0], 'r-', label=names[n], c=col)
+        ax2.plot(100*np.sum(b_data, axis=0)/b_data.shape[0], label=names[n], c=col)
         ax2.grid(1)
         ax2.set_xlabel("trial")
         ax2.set_ylabel("% of best")
@@ -108,7 +108,7 @@ def run_10_armed(run_type="classic"):
     run_type="deviant" -> Run the deviant 10-armed testbed example requested in exercise 2.5 of the RL book.
     :return: plot graph
     """
-    n_steps = 100
+    n_steps = 1000
     n_mean = 200
     best, log = run_testbed(n_steps, n_mean, 10, bed_type=run_type, verbose=1)
 
