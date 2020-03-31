@@ -102,17 +102,20 @@ class EGreedyBandit(GreedyBandit):
 
 def plot_data(best: int, *args, names=[]):
     """
-    Plot
-    :param data:
+    Plot the data obtained in a run in the way shown in the RL book.
+    :param best: tuple (action, reward) containing the best choice found for the given run.
+    :param args: sequence of data to plot in the format (n_mean, n_steps, 2), each data is treated as (action, reward).
+    :param names: labels to put in the data plot.
     :return:
     """
+    n_args = len(args)
     fig = plt.figure()
     ax1 = fig.add_subplot(2, 1, 1)
     ax2 = fig.add_subplot(2, 1, 2)
-    color = iter(plt.cm.rainbow(np.linspace(0, 1, len(args))))
+    color = iter(plt.cm.rainbow(np.linspace(0, 1, n_args)))
 
-    if not names:
-        names = ["data_{}".format(k) for k in range(len(args))]
+    if not names or len(names) != n_args:
+        names = ["data_{}".format(k) for k in range(n_args)]
 
     for n, data in enumerate(args):
         col = next(color)
@@ -157,7 +160,11 @@ def plot_testbed(test_bed: TestBed):
     plt.show()
 
 
-if __name__ == "__main__":
+def run_10_armed():
+    """
+    Run the 10-armed testbed example that is depicted in the RL book.
+    :return: plot graph
+    """
     test_bed = TestBed(10)
     best = test_bed.get_best()
     # plot_testbed(test_bed)
@@ -168,7 +175,7 @@ if __name__ == "__main__":
     log = [[] for i in range(len(bandits))]
     for k in range(n_mean):
         print("Training iteration: ", k)
-        [bandit.reset() for bandit in bandits]      #restart all bandits
+        [bandit.reset() for bandit in bandits]  # restart all bandits
         for b_bum, bandit in enumerate(bandits):
             trial = []
             for n in range(n_steps):
@@ -180,3 +187,7 @@ if __name__ == "__main__":
 
     print("Best choice {}, value: {}".format(best[0], best[1]))
     plot_data(best, log[0], log[1], log[2], names=["greedy", "e=0.1", "e=0.01"])
+
+
+if __name__ == "__main__":
+    run_10_armed()
