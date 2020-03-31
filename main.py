@@ -73,6 +73,9 @@ class GreedyBandit:
     def take_action(self):
         return np.argmax(self.Qn)
 
+    def reset(self):
+        self.__init__(self.arm_size)
+
 
 class EGreedyBandit(GreedyBandit):
     """
@@ -92,6 +95,9 @@ class EGreedyBandit(GreedyBandit):
             return np.argmax(self.Qn)
         else:
             return rd.sample(range(self.arm_size), 1)[0]
+
+    def reset(self):
+        self.__init__(self.arm_size, self.eps)
 
 
 def plot_data(best: int, *args, names=[]):
@@ -156,12 +162,13 @@ if __name__ == "__main__":
     best = test_bed.get_best()
     # plot_testbed(test_bed)
 
-    n_steps = 1000
-    n_mean = 2000
-    log = [[] for i in range(3)]    #TODO: remove this hardcode here
+    n_steps = 100
+    n_mean = 200
+    bandits = [GreedyBandit(10), EGreedyBandit(10, 0.1), EGreedyBandit(10, 0.01)]
+    log = [[] for i in range(len(bandits))]
     for k in range(n_mean):
         print("Training iteration: ", k)
-        bandits = [GreedyBandit(10), EGreedyBandit(10, 0.1), EGreedyBandit(10, 0.01)]
+        [bandit.reset() for bandit in bandits]      #restart all bandits
         for b_bum, bandit in enumerate(bandits):
             trial = []
             for n in range(n_steps):
