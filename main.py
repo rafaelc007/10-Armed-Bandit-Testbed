@@ -78,6 +78,8 @@ def run_testbed(n_steps, n_mean, n_arms, bed_type="classic", verbose=0):
         test_bed = TestBed(n_arms)
     elif bed_type == "deviant":
         test_bed = DeviantTestBed(n_arms)
+    else:
+        raise Exception("Testbed type not supported")
 
     if verbose > 1:
         plot_testbed(test_bed)
@@ -100,31 +102,19 @@ def run_testbed(n_steps, n_mean, n_arms, bed_type="classic", verbose=0):
 
     return best, log
 
-def run_10_armed():
+def run_10_armed(run_type="classic"):
     """
-    Run the 10-armed testbed example that is depicted in the RL book.
+    run_type="classic" -> Run the 10-armed testbed example that is depicted in the RL book.
+    run_type="deviant" -> Run the deviant 10-armed testbed example requested in exercise 2.5 of the RL book.
     :return: plot graph
     """
     n_steps = 100
     n_mean = 200
-    best, log = run_testbed(n_steps, n_mean, 10, verbose=1)
-
-    print("Best choice {}, value: {}".format(best[0], best[1]))
-    plot_data(best, log[0], log[1], log[2], names=["greedy", "e=0.1", "e=0.01"])
-
-
-def run_deviant10_armed():
-    """
-    Run the 10-armed testbed example that is depicted in the RL book.
-    :return: plot graph
-    """
-    n_steps = 100
-    n_mean = 200
-    best, log = run_testbed(n_steps, n_mean, 10, bed_type="deviant", verbose=1)
+    best, log = run_testbed(n_steps, n_mean, 10, bed_type=run_type, verbose=1)
 
     print("Best choice {}, value: {}".format(best[0], best[1]))
     plot_data(best, log[0], log[1], log[2], names=["greedy", "e=0.1", "e=0.01"])
 
 
 if __name__ == "__main__":
-    run_deviant10_armed()
+    run_10_armed("deviant")
