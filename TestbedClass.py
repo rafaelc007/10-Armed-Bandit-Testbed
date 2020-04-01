@@ -21,7 +21,8 @@ class TestBed:
 
     def get_best(self):
         vals = [arm.get_actionval() for arm in self._arms]
-        return [np.argmax(vals), np.max(vals)]
+        max_act = np.argmax(vals)
+        return [max_act, vals[max_act]]
 
 
 class DeviantTestBed(TestBed):
