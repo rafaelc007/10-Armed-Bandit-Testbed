@@ -28,3 +28,7 @@ class DeviantTestBed(TestBed):
     def __init__(self, n_size=10):
         self._n_arms = n_size
         self._arms = [DeviantArm() for i in range(self._n_arms)]
+
+    def trial(self, action):
+        [arm.update_actionval() for arm in self._arms]
+        return super().trial(action)

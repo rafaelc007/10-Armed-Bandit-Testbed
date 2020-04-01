@@ -21,6 +21,5 @@ class DeviantArm(Arm):
     The Deviant Arm implements an arm driven by a random walk on its action value. The random walk presents mean zero
     and std = 0.01.
     """
-    def get_reward(self):
+    def update_actionval(self):
         self._action_val += rd.gauss(0, 0.01)
-        return rd.gauss(self._action_val, 1)

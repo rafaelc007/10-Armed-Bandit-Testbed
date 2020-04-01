@@ -4,10 +4,10 @@ from TestbedClass import TestBed, DeviantTestBed
 from BanditClass import GreedyBandit, EGreedyBandit
 
 
-def plot_data(best: int, *args, names=[]):
+def plot_data(*args, names=[]):
     """
     Plot the data obtained in a run in the way shown in the RL book.
-    :param best: tuple (action, reward) containing the best choice found for the given run.
+    :param best: tuple (is best action, reward) containing the best choice found for the given run.
     :param args: sequence of data to plot in the format (n_mean, n_steps, 2), each data is treated as (action, reward).
     :param names: labels to put in the data plot.
     :return:
@@ -24,8 +24,8 @@ def plot_data(best: int, *args, names=[]):
     for n, data in enumerate(args):
         col = next(color)
         data = np.array(data)
-        act_data = data[:, :, 0].astype(int)
-        rwd_data = data[:, :, 1]
+        bact_data = data[:, :, 0].astype(int)   # is best action? data
+        rwd_data = data[:, :, 1]        # reward data
 
         ax1.plot(np.average(rwd_data, axis=0), label=names[n], c=col, alpha=0.8)
         ax1.grid(1)
@@ -33,11 +33,10 @@ def plot_data(best: int, *args, names=[]):
         ax1.set_ylabel("reward")
         ax1.legend()
 
-        b_data = act_data == best[0]
-        ax2.plot(100*np.average(b_data, axis=0), label=names[n], c=col, alpha=0.8)
+        ax2.plot(100*np.average(bact_data, axis=0), label=names[n], c=col, alpha=0.8)
         ax2.grid(1)
         ax2.set_xlabel("trial")
-        ax2.set_ylabel("% of choosing {}".format(best[0]))
+        ax2.set_ylabel("% of choosing best")
         ax2.legend()
 
 
@@ -71,7 +70,7 @@ def run_testbed(n_steps, n_mean, n_arms, bed_type="classic", verbose=0):
     :param n_mean: number of trials to use when computing the mean
     :param n_arms: number of arms to use
     :param verbose: 0 -> show nothing, 1 -> show steps, 2 or more -> show steps and testbed graph
-    :return: best choice, log data collected from the trials
+    :return: log data collected from the trials
     """
 
     if bed_type == "classic":
@@ -86,7 +85,6 @@ def run_testbed(n_steps, n_mean, n_arms, bed_type="classic", verbose=0):
     if verbose > 1:
         plot_testbed(test_bed)
 
-    best = test_bed.get_best()
     log = [[] for i in range(len(bandits))]
     for k in range(n_mean):
         if verbose > 0:
@@ -99,10 +97,12 @@ def run_testbed(n_steps, n_mean, n_arms, bed_type="classic", verbose=0):
                 reward = test_bed.trial(act)
                 if reward:
                     bandit.train(act, reward)
-                trial.append([act, reward])
+                else:
+                    raise Exception("reward returned None")
+                trial.append([act == test_bed.get_best()[0], reward])
             log[b_bum].append(trial)
 
-    return best, log
+    return log
 
 def run_10_armed(run_type="classic"):
     """
@@ -110,15 +110,14 @@ def run_10_armed(run_type="classic"):
     run_type="deviant" -> Run the deviant 10-armed testbed example requested in exercise 2.5 of the RL book.
     :return: plot graph
     """
-    n_steps = 10000
-    n_mean = 2000
-    best, log = run_testbed(n_steps, n_mean, 10, bed_type=run_type, verbose=1)
+    n_steps = 100
+    n_mean = 100
+    log = run_testbed(n_steps, n_mean, 10, bed_type=run_type, verbose=1)
 
-    print("Best choice {}, value: {}".format(best[0], best[1]))
     if run_type=="classic":
-        plot_data(best, log[0], log[1], log[2], names=["greedy", "e=0.1", "e=0.01"])
+        plot_data(log[0], log[1], log[2], names=["greedy", "e=0.1", "e=0.01"])
     else:
-        plot_data(best, log[0], log[1], names=["average", "const alpha"])
+        plot_data(log[0], log[1], names=["average", "const alpha"])
 
 
 if __name__ == "__main__":
