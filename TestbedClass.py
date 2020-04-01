@@ -6,22 +6,22 @@ class TestBed:
     """
     The testbed includes a number 'n_arms' of bandits, each ruled by a gaussian reward rule.
     """
-    __arms = []
-    __n_arms = 0
+    _arms = []
+    _n_arms = 0
 
     def __init__(self, n_size=10):
-        self.__n_arms = n_size
-        self.__arms = [Arm(200 + i) for i in range(self.__n_arms)]
+        self._n_arms = n_size
+        self._arms = [Arm(200 + i) for i in range(self._n_arms)]
 
     def trial(self, action):
-        if action > self.__n_arms or action < 0:
+        if action > self._n_arms or action < 0:
             print("action a out of bounds")
             return None
-        return self.__arms[action].get_reward()
+        return self._arms[action].get_reward()
 
 
     def get_best(self):
-        vals = [arm.get_actionval() for arm in self.__arms]
+        vals = [arm.get_actionval() for arm in self._arms]
         return [np.argmax(vals), np.max(vals)]
 
 

@@ -4,17 +4,17 @@ class Arm:
     """
     Implements a bandit arm with gaussian distribution for the reward.
     """
-    __action_val = 0
+    _action_val = 0
 
     def __init__(self, seed=100):
         rd.seed(seed)
-        self.__action_val = rd.gauss(0, 1)
+        self._action_val = rd.gauss(0, 1)
 
     def get_actionval(self):
-        return self.__action_val
+        return self._action_val
 
     def get_reward(self):
-        return rd.gauss(self.__action_val, 1)
+        return rd.gauss(self._action_val, 1)
 
 
 class DeviantArm(Arm):
@@ -23,5 +23,5 @@ class DeviantArm(Arm):
     and std = 0.01.
     """
     def get_reward(self):
-        self.__action_val += rd.gauss(0, 0.01)
-        return rd.gauss(self.__action_val, 1)
+        self._action_val += rd.gauss(0, 0.01)
+        return rd.gauss(self._action_val, 1)
