@@ -52,14 +52,14 @@ def plot_testbed(test_bed: TestBed):
     :return:
     """
     arm_values = []
-    for arm in test_bed.arms:
+    for arm in test_bed.__arms:
         arm_values.append(arm.action_val)
 
-    reward_vals = [[arm.get_reward() for k in range(200)] for arm in test_bed.arms]
+    reward_vals = [[arm.get_reward() for k in range(200)] for arm in test_bed.__arms]
 
     plt.figure()
     plt.boxplot(reward_vals)
-    plt.scatter(range(1, test_bed.n_arms+1), arm_values, c="blue")
+    plt.scatter(range(1, test_bed.__n_arms + 1), arm_values, c="blue")
     plt.grid(1)
     plt.show()
 
@@ -76,7 +76,7 @@ def run_testbed(n_steps, n_mean, n_arms, bed_type="classic", verbose=0):
 
     if bed_type == "classic":
         test_bed = TestBed(n_arms)
-        bandits = [GreedyBandit(n_arms), EGreedyBandit(n_arms, 0.1), EGreedyBandit(n_arms, 0.01)]
+        bandits = [GreedyBandit(n_arms), EGreedyBandit(n_arms, eps_val=0.1), EGreedyBandit(n_arms, eps_val=0.01)]
     elif bed_type == "deviant":
         test_bed = DeviantTestBed(n_arms)
         bandits = [EGreedyBandit(n_arms, eps_val=0.1), EGreedyBandit(n_arms, alpha=0.1, eps_val=0.1)]
