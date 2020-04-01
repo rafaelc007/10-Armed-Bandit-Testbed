@@ -28,4 +28,4 @@ class TestBed:
 class DeviantTestBed(TestBed):
     def __init__(self, n_size=10):
         self.n_arms = n_size
-        self.arms = [DeviantArm(100 + i) for i in range(self.n_arms)]
+        self.arms = [DeviantArm(200 + i) for i in range(self.n_arms)]

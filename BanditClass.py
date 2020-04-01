@@ -10,6 +10,12 @@ class GreedyBandit:
     step_n = 0
     alpha_val = None
 
+    @staticmethod
+    def randargmax(b, **kw):
+        """ a random tie-breaking argmax"""
+        b = np.array(b)
+        return np.argmax(np.random.random(b.shape) * (b == b.max()), **kw)
+
     def alpha(self):
         if self.alpha_val is  None:
             return 1/self.step_n
@@ -27,7 +33,7 @@ class GreedyBandit:
         self.Qn[action] += self.alpha() * (reward - self.Qn[action])
 
     def take_action(self):
-        return np.argmax(self.Qn)
+        return self.randargmax(self.Qn)
 
     def reset(self):
         self.__init__(self.arm_size)
@@ -48,7 +54,7 @@ class EGreedyBandit(GreedyBandit):
 
     def take_action(self):
         if rd.random() > self.eps:
-            return np.argmax(self.Qn)
+            return self.randargmax(self.Qn)
         else:
             return rd.sample(range(self.arm_size), 1)[0]
 
