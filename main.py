@@ -97,7 +97,8 @@ def run_testbed(n_steps, n_mean, n_arms, bed_type="classic", verbose=0):
             for n in range(n_steps):
                 act = bandit.take_action()
                 reward = test_bed.trial(act)
-                bandit.train(act, reward)
+                if reward:
+                    bandit.train(act, reward)
                 trial.append([act, reward])
             log[b_bum].append(trial)
 
@@ -109,7 +110,7 @@ def run_10_armed(run_type="classic"):
     run_type="deviant" -> Run the deviant 10-armed testbed example requested in exercise 2.5 of the RL book.
     :return: plot graph
     """
-    n_steps = 800
+    n_steps = 10000
     n_mean = 2000
     best, log = run_testbed(n_steps, n_mean, 10, bed_type=run_type, verbose=1)
 
@@ -121,4 +122,4 @@ def run_10_armed(run_type="classic"):
 
 
 if __name__ == "__main__":
-    run_10_armed("classic")
+    run_10_armed("deviant")

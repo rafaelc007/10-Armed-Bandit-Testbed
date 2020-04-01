@@ -50,20 +50,20 @@ class EGreedyBandit(GreedyBandit):
     """
     Epsilon greedy bandit, ruled by the factor eps which decides when to take actions and when to explore.
     """
-    __eps = 0
+    _eps = 0
 
     def __init__(self, arm_size, alpha=None, eps_val=0.5):
         super().__init__(arm_size, alpha=alpha)
-        self.__eps = eps_val
+        self._eps = eps_val
 
     def set_eps(self, value):
-        self.__eps = value
+        self._eps = value
 
     def take_action(self):
-        if rd.random() > self.__eps:
+        if rd.random() > self._eps:
             return self.randargmax(self._Qn)
         else:
             return rd.sample(range(self._arm_size), 1)[0]
 
     def reset(self):
-        self.__init__(self.get_armsize(), self.get_alphaval(), self.__eps)
+        self.__init__(self._arm_size, self._alpha_val, self._eps)

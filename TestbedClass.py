@@ -19,7 +19,6 @@ class TestBed:
             return None
         return self._arms[action].get_reward()
 
-
     def get_best(self):
         vals = [arm.get_actionval() for arm in self._arms]
         return [np.argmax(vals), np.max(vals)]
@@ -27,5 +26,5 @@ class TestBed:
 
 class DeviantTestBed(TestBed):
     def __init__(self, n_size=10):
-        self.n_arms = n_size
-        self.arms = [DeviantArm() for i in range(self.n_arms)]
+        self._n_arms = n_size
+        self._arms = [DeviantArm() for i in range(self._n_arms)]
