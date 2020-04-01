@@ -75,7 +75,7 @@ def run_testbed(n_steps, n_mean, n_arms, bed_type="classic", verbose=0):
 
     if bed_type == "classic":
         test_bed = TestBed(n_arms)
-        bandits = [GreedyBandit(n_arms, alpha=0.1), EGreedyBandit(n_arms, alpha=0.1, eps_val=0.1), EGreedyBandit(n_arms, alpha=0.1, eps_val=0.01)]
+        bandits = [GreedyBandit(n_arms), EGreedyBandit(n_arms, eps_val=0.1), EGreedyBandit(n_arms, eps_val=0.01)]
     elif bed_type == "deviant":
         test_bed = DeviantTestBed(n_arms)
         bandits = [EGreedyBandit(n_arms, eps_val=0.1), EGreedyBandit(n_arms, alpha=0.1, eps_val=0.1)]
@@ -110,7 +110,7 @@ def run_10_armed(run_type="classic"):
     run_type="deviant" -> Run the deviant 10-armed testbed example requested in exercise 2.5 of the RL book.
     :return: plot graph
     """
-    n_steps = 5000
+    n_steps = 800
     n_mean = 2000
     log = run_testbed(n_steps, n_mean, 10, bed_type=run_type, verbose=1)
 
@@ -121,4 +121,4 @@ def run_10_armed(run_type="classic"):
 
 
 if __name__ == "__main__":
-    run_10_armed("deviant")
+    run_10_armed("classic")

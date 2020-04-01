@@ -10,18 +10,13 @@ class GreedyBandit:
     _Qn = []
     _step_n = 0
     _alpha_val = None
+    _Na = [] #number of times each action was picked up
 
     @staticmethod
     def randargmax(b, **kw):
         """ a random tie-breaking argmax"""
         b = np.array(b)
         return np.argmax(np.random.random(b.shape) * (b == b.max()), **kw)
-
-    def alpha(self):
-        if self._alpha_val is None:
-            return 1/self._step_n
-        else:
-            return self._alpha_val
 
     def get_armsize(self):
         return self._arm_size
@@ -34,10 +29,16 @@ class GreedyBandit:
             self._alpha_val = alpha
         self._arm_size = arm_size
         self._Qn = [0] * self._arm_size
+        self._Na = [0] * self._arm_size
 
     def train(self, action, reward):
         self._step_n += 1
-        self._Qn[action] += self.alpha() * (reward - self._Qn[action])
+        self._Na[action] += 1
+
+        if self._alpha_val is None:
+            self._Qn[action] += 1/self._Na[action] * (reward - self._Qn[action])   # sample-average
+        else:
+            self._Qn[action] += self._alpha_val * (reward - self._Qn[action])
 
     def take_action(self):
         return self.randargmax(self._Qn)
