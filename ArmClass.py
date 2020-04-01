@@ -6,8 +6,7 @@ class Arm:
     """
     _action_val = 0
 
-    def __init__(self, seed=100):
-        rd.seed(seed)
+    def __init__(self):
         self._action_val = rd.gauss(0, 1)
 
     def get_actionval(self):

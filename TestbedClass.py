@@ -11,7 +11,7 @@ class TestBed:
 
     def __init__(self, n_size=10):
         self._n_arms = n_size
-        self._arms = [Arm(200 + i) for i in range(self._n_arms)]
+        self._arms = [Arm() for i in range(self._n_arms)]
 
     def trial(self, action):
         if action > self._n_arms or action < 0:
@@ -28,4 +28,4 @@ class TestBed:
 class DeviantTestBed(TestBed):
     def __init__(self, n_size=10):
         self.n_arms = n_size
-        self.arms = [DeviantArm(200 + i) for i in range(self.n_arms)]
+        self.arms = [DeviantArm() for i in range(self.n_arms)]
