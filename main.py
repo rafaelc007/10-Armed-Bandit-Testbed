@@ -62,25 +62,18 @@ def plot_testbed(test_bed: TestBed):
     plt.grid(1)
     plt.show()
 
-def run_testbed(n_steps, n_mean, n_arms, bed_type="classic", verbose=0):
+def run_testbed(n_steps, n_mean, n_arms, bed_params, verbose=0):
     """
     Runs a testbed simulation
-    :param bed_type: can be one of ["classic", "deviant"] used to choose the type of simulation.
+    :param bed_params: (TestBed, [Bandits])  instances
     :param n_teps: number of steps to train the testbed
     :param n_mean: number of trials to use when computing the mean
     :param n_arms: number of arms to use
     :param verbose: 0 -> show nothing, 1 -> show steps, 2 or more -> show steps and testbed graph
     :return: log data collected from the trials
     """
-
-    if bed_type == "classic":
-        test_bed = TestBed(n_arms)
-        bandits = [GreedyBandit(n_arms), EGreedyBandit(n_arms, eps_val=0.1), EGreedyBandit(n_arms, eps_val=0.01)]
-    elif bed_type == "deviant":
-        test_bed = DeviantTestBed(n_arms)
-        bandits = [EGreedyBandit(n_arms, eps_val=0.1), EGreedyBandit(n_arms, alpha=0.1, eps_val=0.1)]
-    else:
-        raise Exception("Testbed type not supported")
+    test_bed = bed_params[0]
+    bandits = bed_params[1]
 
     if verbose > 1:
         plot_testbed(test_bed)
@@ -104,15 +97,26 @@ def run_testbed(n_steps, n_mean, n_arms, bed_type="classic", verbose=0):
 
     return log
 
-def run_10_armed(run_type="classic"):
+def run_10_armed(n_steps, n_mean, run_type="classic"):
     """
-    run_type="classic" -> Run the 10-armed testbed example that is depicted in the RL book.
-    run_type="deviant" -> Run the deviant 10-armed testbed example requested in exercise 2.5 of the RL book.
+    :param n_teps: number of steps to train the testbed
+    :param n_mean: number of trials to use when computing the mean
+    :param run_type:
+        run_type="classic" -> Run the 10-armed testbed example that is depicted in the RL book.
+        run_type="deviant" -> Run the deviant 10-armed testbed example requested in exercise 2.5 of the RL book.
     :return: plot graph
     """
-    n_steps = 800
-    n_mean = 2000
-    log = run_testbed(n_steps, n_mean, 10, bed_type=run_type, verbose=1)
+    n_arms = 10
+    if run_type == "classic":
+        test_bed = TestBed(n_arms)
+        bandits = [GreedyBandit(n_arms), EGreedyBandit(n_arms, eps_val=0.1), EGreedyBandit(n_arms, eps_val=0.01)]
+    elif run_type == "deviant":
+        test_bed = DeviantTestBed(n_arms)
+        bandits = [EGreedyBandit(n_arms, eps_val=0.1), EGreedyBandit(n_arms, alpha=0.1, eps_val=0.1)]
+    else:
+        raise Exception("Testbed type not supported")
+
+    log = run_testbed(n_steps, n_mean, n_arms, [test_bed, bandits], verbose=1)
 
     if run_type == "classic":
         plot_data(log[0], log[1], log[2], names=["greedy", "e=0.1", "e=0.01"])
@@ -121,4 +125,4 @@ def run_10_armed(run_type="classic"):
 
 
 if __name__ == "__main__":
-    run_10_armed("classic")
+    run_10_armed(1000, 2000, "classic")
