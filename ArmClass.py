@@ -10,6 +10,9 @@ class Arm:
         rd.seed(seed)
         self.__action_val = rd.gauss(0, 1)
 
+    def get_actionval(self):
+        return self.__action_val
+
     def get_reward(self):
         return rd.gauss(self.__action_val, 1)
 

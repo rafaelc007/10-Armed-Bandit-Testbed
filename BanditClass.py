@@ -18,10 +18,16 @@ class GreedyBandit:
         return np.argmax(np.random.random(b.shape) * (b == b.max()), **kw)
 
     def alpha(self):
-        if self.__alpha_val is  None:
+        if self.__alpha_val is None:
             return 1/self.__step_n
         else:
             return self.__alpha_val
+
+    def get_armsize(self):
+        return self.__arm_size
+
+    def get_alphaval(self):
+        return self.__alpha_val
 
     def __init__(self, arm_size, alpha=None):
         if alpha:
@@ -60,4 +66,4 @@ class EGreedyBandit(GreedyBandit):
             return rd.sample(range(self.__arm_size), 1)[0]
 
     def reset(self):
-        self.__init__(self.__arm_size, self.__alpha_val, self.__eps)
+        self.__init__(self.get_armsize(), self.get_alphaval(), self.__eps)
